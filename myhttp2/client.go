@@ -1,4 +1,4 @@
-package myhttp1
+package myhttp2
 
 import (
 	"errors"

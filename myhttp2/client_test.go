@@ -1,9 +1,9 @@
-package myhttp1_test
+package myhttp2_test
 
 import (
 	"fmt"
 	"io/ioutil"
-	"local/demo-accept-interfaces-return-structs/myhttp1"
+	"local/demo-accept-interfaces-return-structs/myhttp2"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -26,7 +26,7 @@ func TestGetOK(t *testing.T) {
 		}))
 	defer ts.Close()
 
-	sut := myhttp1.NewClient(time.Second, "irrelevant")
+	sut := myhttp2.NewClient(time.Second, "irrelevant")
 	got, err := sut.Get(ts.URL)
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
@@ -49,7 +49,7 @@ func TestGetResponseNot200(t *testing.T) {
 		}))
 	defer ts.Close()
 
-	sut := myhttp1.NewClient(time.Second, "irrelevant")
+	sut := myhttp2.NewClient(time.Second, "irrelevant")
 	got, err := sut.Get(ts.URL)
 	if err == nil {
 		t.Errorf("unexpected success, want 404")
@@ -108,7 +108,7 @@ func TestPostOK(t *testing.T) {
 		}))
 	defer ts.Close()
 
-	sut := myhttp1.NewClient(time.Second, contentType)
+	sut := myhttp2.NewClient(time.Second, contentType)
 	got, err := sut.Post(ts.URL, strings.NewReader(requestBody))
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
@@ -130,7 +130,7 @@ func TestPostResponseNot200(t *testing.T) {
 		}))
 	defer ts.Close()
 
-	sut := myhttp1.NewClient(time.Second, "irrelevant")
+	sut := myhttp2.NewClient(time.Second, "irrelevant")
 	got, err := sut.Post(ts.URL, strings.NewReader("irrelevant"))
 	if err == nil {
 		t.Errorf("unexpected success, want 404")
@@ -150,17 +150,17 @@ func TestInnerError(t *testing.T) {
 		desc string
 		// call calls a method of c with the given url
 		// and returns the error it returns
-		call func(c myhttp1.Client, url string) error
+		call func(c *myhttp2.Client, url string) error
 	}{
 		{
 			"GET",
-			func(c myhttp1.Client, url string) error {
+			func(c *myhttp2.Client, url string) error {
 				_, err := c.Get(url)
 				return err
 			},
 		}, {
 			"POST",
-			func(c myhttp1.Client, url string) error {
+			func(c *myhttp2.Client, url string) error {
 				body := strings.NewReader("irrelevant")
 				_, err := c.Post(url, body)
 				return err
@@ -172,7 +172,7 @@ func TestInnerError(t *testing.T) {
 			t.Parallel()
 
 			const want = "unsupported protocol scheme"
-			sut := myhttp1.NewClient(time.Second, "irrelevant")
+			sut := myhttp2.NewClient(time.Second, "irrelevant")
 			_, err := sut.Get("badscheme://example.com")
 			if err == nil {
 				t.Errorf("unexpected success, want error %q", want)
@@ -190,17 +190,17 @@ func TestTimeout(t *testing.T) {
 		desc string
 		// call calls a method of c with the given url
 		// and returns the error it returns
-		call func(c myhttp1.Client, url string) error
+		call func(c *myhttp2.Client, url string) error
 	}{
 		{
 			"GET",
-			func(c myhttp1.Client, url string) error {
+			func(c *myhttp2.Client, url string) error {
 				_, err := c.Get(url)
 				return err
 			},
 		}, {
 			"POST",
-			func(c myhttp1.Client, url string) error {
+			func(c *myhttp2.Client, url string) error {
 				body := strings.NewReader("irrelevant")
 				_, err := c.Post(url, body)
 				return err
@@ -221,7 +221,7 @@ func TestTimeout(t *testing.T) {
 				}))
 			defer server.Close()
 
-			sut := myhttp1.NewClient(timeout, "irrelevant")
+			sut := myhttp2.NewClient(timeout, "irrelevant")
 			err := tc.call(sut, server.URL)
 			if err == nil {
 				t.Errorf("unexpected success, want 404")
