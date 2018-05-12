@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"local/demo-accept-interfaces-return-structs/myhttp4"
 	"net/http"
-	"net/url"
 	"strings"
 	"testing"
 )
@@ -17,11 +16,6 @@ type mock struct {
 	post func(url, contentType string, body io.Reader) (*http.Response, error)
 }
 
-func (m *mock) Do(_ *http.Request) (*http.Response, error) {
-	m.t.Fatal("unexpected call to Do")
-	return nil, nil
-}
-
 func (m *mock) Get(url string) (*http.Response, error) {
 	if m.get == nil {
 		m.t.Fatal("unexpected call to Get")
@@ -29,21 +23,11 @@ func (m *mock) Get(url string) (*http.Response, error) {
 	return m.get(url)
 }
 
-func (m *mock) Head(_ string) (*http.Response, error) {
-	m.t.Fatal("unexpected call to Head")
-	return nil, nil
-}
-
-func (m *mock) Post(url, contentType string, body io.Reader) (*http.Response, error) {
+func (m *mock) Post(a, b string, c io.Reader) (*http.Response, error) {
 	if m.post == nil {
 		m.t.Fatal("unexpected call to Post")
 	}
-	return m.post(url, contentType, body)
-}
-
-func (m *mock) PostForm(_ string, _ url.Values) (*http.Response, error) {
-	m.t.Fatal("unexpected call to PostForm")
-	return nil, nil
+	return m.post(a, b, c)
 }
 
 func TestGet(t *testing.T) {
