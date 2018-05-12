@@ -7,20 +7,20 @@ import (
 	"net/http"
 )
 
-func NewClient(inner HTTPClient, contentType string) *Client {
+func NewClient(inner GetPoster, contentType string) *Client {
 	return &Client{
 		inner:       inner,
 		contentType: contentType,
 	}
 }
 
-type HTTPClient interface {
+type GetPoster interface {
 	Get(url string) (resp *http.Response, err error)
 	Post(url string, contentType string, body io.Reader) (resp *http.Response, err error)
 }
 
 type Client struct {
-	inner       HTTPClient
+	inner       GetPoster
 	contentType string
 }
 

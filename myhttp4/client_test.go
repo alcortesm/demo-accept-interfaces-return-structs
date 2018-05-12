@@ -75,7 +75,7 @@ func TestGet(t *testing.T) {
 		},
 	} {
 		t.Run(tt.desc, func(t *testing.T) {
-			// mock an HTTPClient to return innerResponse and innerError
+			// mock an GetPoster to return innerResponse and innerError
 			// to a GET request for the urlFix
 			inner := &mock{
 				t: t,
@@ -159,7 +159,7 @@ func TestPost(t *testing.T) {
 		},
 	} {
 		t.Run(tt.desc, func(t *testing.T) {
-			// mock an HTTPClient to return innerResponse and innerError
+			// mock an GetPoster to return innerResponse and innerError
 			// to a POST request for the urlFix
 			inner := &mock{
 				t: t,
