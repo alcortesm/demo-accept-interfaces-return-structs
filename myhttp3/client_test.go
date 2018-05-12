@@ -178,8 +178,7 @@ func TestInnerError(t *testing.T) {
 			const want = "unsupported protocol scheme"
 			inner := &http.Client{Timeout: time.Second}
 			sut := myhttp3.NewClient(inner, "irrelevant")
-			_, err := sut.Get("badscheme://example.com")
-			if err == nil {
+			if err := tc.call(sut, "badscheme://example.com"); err == nil {
 				t.Errorf("unexpected success, want error %q", want)
 			} else if !strings.Contains(err.Error(), want) {
 				t.Errorf("wrong error, want %q, got: %v", want, err)

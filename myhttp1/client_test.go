@@ -173,8 +173,7 @@ func TestInnerError(t *testing.T) {
 
 			const want = "unsupported protocol scheme"
 			sut := myhttp1.NewClient(time.Second, "irrelevant")
-			_, err := sut.Get("badscheme://example.com")
-			if err == nil {
+			if err := tc.call(sut, "badscheme://example.com"); err == nil {
 				t.Errorf("unexpected success, want error %q", want)
 			} else if !strings.Contains(err.Error(), want) {
 				t.Errorf("wrong error, want %q, got: %v", want, err)
@@ -211,6 +210,7 @@ func TestTimeout(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.desc, func(t *testing.T) {
 			t.Parallel()
+
 			// configure a server to delay its response
 			// more twice than the client timeout
 			timeout := 5 * time.Millisecond
