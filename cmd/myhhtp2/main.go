@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"local/demo-accept-interfaces-return-structs/myhttp2"
 	"log"
 	"time"
+
+	"github.com/alcortesm/demo-accept-interfaces-return-structs/myhttp2"
 )
 
 func main() {
@@ -16,5 +17,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%.25s...", data)
+	fmt.Printf("%.25s...\n", data)
 }

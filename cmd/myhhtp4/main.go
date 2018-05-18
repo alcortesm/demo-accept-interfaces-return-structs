@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"io"
-	"local/demo-accept-interfaces-return-structs/myhttp4"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/alcortesm/demo-accept-interfaces-return-structs/myhttp4"
 )
 
 func main() {
