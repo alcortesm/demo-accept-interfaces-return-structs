@@ -7,39 +7,41 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+// Dic is a dictionary of abbreviations and their meanings.
 type Dict struct {
 	session    *mgo.Session
 	database   string
 	collection string
 }
 
-func NewDict(s *mgo.Session, d, c string) *Dict {
+func NewDict(session *mgo.Session, db, col string) *Dict {
 	return &Dict{
-		session:    s,
-		database:   d,
-		collection: c,
+		session:    session,
+		database:   db,
+		collection: col,
 	}
 }
 
-type entry struct {
+// Entry is the internal mongo schema for dictionary entries.
+type Entry struct {
 	ID           bson.ObjectId `bson:"_id,omitempty"`
 	Abbreviation string        `bson:"abbr"`
 	Meaning      string        `bson:"data"`
 }
 
-func (c *Dict) LookUp(a string) (string, error) {
-	col := c.session.Clone().DB(c.database).C(c.collection)
+func (d *Dict) LookUp(a string) (string, error) {
+	col := d.session.Clone().DB(d.database).C(d.collection)
 	query := bson.M{"abbr": a}
-	var result entry
+	var result Entry
 	if err := col.Find(query).One(&result); err != nil {
 		return "", fmt.Errorf("looking for %q: %s", a, err)
 	}
 	return result.Meaning, nil
 }
 
-func (c *Dict) Add(a, m string) error {
-	col := c.session.Clone().DB(c.database).C(c.collection)
-	doc := entry{
+func (d *Dict) Add(a, m string) error {
+	col := d.session.Clone().DB(d.database).C(d.collection)
+	doc := Entry{
 		Abbreviation: a,
 		Meaning:      m,
 	}

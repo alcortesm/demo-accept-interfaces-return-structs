@@ -6,7 +6,7 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-// Dict is a dictionary of abbreviations and their definitions
+// Dict is a dictionary of abbreviations and their meanings.
 type Dict struct {
 	session    Session
 	database   string
@@ -37,7 +37,7 @@ func NewDict(session Session, db, col string) *Dict {
 	}
 }
 
-// Entry is the internal mongo schema of dictionary entries.
+// Entry is the internal mongo schema for dictionary entries.
 type Entry struct {
 	ID           bson.ObjectId `bson:"_id,omitempty"`
 	Abbreviation string        `bson:"abbr"`
