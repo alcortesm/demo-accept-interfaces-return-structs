@@ -3,12 +3,13 @@ package myhttp3_test
 import (
 	"fmt"
 	"io/ioutil"
-	"local/demo-accept-interfaces-return-structs/myhttp3"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/alcortesm/demo-accept-interfaces-return-structs/myhttp3"
 )
 
 func TestGetOK(t *testing.T) {

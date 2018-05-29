@@ -1,34 +1,33 @@
-package mymongo2_test
+package mymongo2
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/alcortesm/demo-accept-interfaces-return-structs/mymongo2"
 	"github.com/globalsign/mgo/bson"
 )
 
 type mockSession struct {
-	clone func() mymongo2.Session
-	db    func(string) mymongo2.DataBase
+	clone func() Session
+	db    func(string) DataBase
 }
 
-func (m mockSession) Clone() mymongo2.Session       { return m.clone() }
-func (m mockSession) DB(s string) mymongo2.DataBase { return m.db(s) }
+func (m mockSession) Clone() Session       { return m.clone() }
+func (m mockSession) DB(s string) DataBase { return m.db(s) }
 
 type mockDataBase struct {
-	c func(s string) mymongo2.Collection
+	c func(s string) Collection
 }
 
-func (m mockDataBase) C(col string) mymongo2.Collection { return m.c(col) }
+func (m mockDataBase) C(col string) Collection { return m.c(col) }
 
 type mockCollection struct {
-	find   func(interface{}) mymongo2.Query
+	find   func(interface{}) Query
 	insert func(docs ...interface{}) error
 }
 
-func (m mockCollection) Find(i interface{}) mymongo2.Query { return m.find(i) }
-func (m mockCollection) Insert(docs ...interface{}) error  { return m.insert(docs...) }
+func (m mockCollection) Find(i interface{}) Query         { return m.find(i) }
+func (m mockCollection) Insert(docs ...interface{}) error { return m.insert(docs...) }
 
 type mockQuery struct {
 	one func(result interface{}) error
@@ -53,9 +52,9 @@ func TestAddThenLookUp(t *testing.T) {
 	var query mockQuery
 	{
 		session = mockSession{
-			clone: func() mymongo2.Session { return session },
+			clone: func() Session { return session },
 			// checks that the database is fixDB
-			db: func(s string) mymongo2.DataBase {
+			db: func(s string) DataBase {
 				if s != fixDB {
 					t.Fatalf("want %q, got %q", fixDB, s)
 				}
@@ -64,7 +63,7 @@ func TestAddThenLookUp(t *testing.T) {
 		}
 		database = mockDataBase{
 			// checks that the collection is fixCol
-			c: func(s string) mymongo2.Collection {
+			c: func(s string) Collection {
 				if s != fixCol {
 					t.Fatalf("want %q, got %q", fixCol, s)
 				}
@@ -73,7 +72,7 @@ func TestAddThenLookUp(t *testing.T) {
 		}
 		collection = mockCollection{
 			// checks that fixAbbr is being requested
-			find: func(q interface{}) mymongo2.Query {
+			find: func(q interface{}) Query {
 				want := bson.M{"abbr": fixAbbr}
 				if !reflect.DeepEqual(want, q) {
 					t.Fatalf("want %#v, got %#v", want, q)
@@ -85,7 +84,7 @@ func TestAddThenLookUp(t *testing.T) {
 				if len(docs) != 1 {
 					t.Fatalf("docs len was %d, want 1", len(docs))
 				}
-				want := mymongo2.Entry{
+				want := Entry{
 					Abbreviation: fixAbbr,
 					Meaning:      fixMeaning,
 				}
@@ -98,7 +97,7 @@ func TestAddThenLookUp(t *testing.T) {
 		query = mockQuery{
 			// mocks a query that returns fixAbbr and fixMeaning
 			one: func(data interface{}) error {
-				ret, ok := data.(*mymongo2.Entry)
+				ret, ok := data.(*Entry)
 				if !ok {
 					t.Fatal("wrong data type: %T", data)
 				}
@@ -110,7 +109,7 @@ func TestAddThenLookUp(t *testing.T) {
 		}
 	}
 
-	dict := mymongo2.NewDict(session, fixDB, fixCol)
+	dict := NewDict(session, fixDB, fixCol)
 	if err := dict.Add(fixAbbr, fixMeaning); err != nil {
 		t.Fatal(err)
 	}

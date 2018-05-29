@@ -4,10 +4,11 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
-	"local/demo-accept-interfaces-return-structs/myhttp4"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/alcortesm/demo-accept-interfaces-return-structs/myhttp4"
 )
 
 type mock struct {
