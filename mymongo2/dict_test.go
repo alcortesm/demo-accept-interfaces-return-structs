@@ -123,7 +123,8 @@ func TestLookUp(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// mock a mongoDB that checks that fixAbbr is being looked up.
+	// mock a mongoDB that checks that fixAbbr is being looked up and returns
+	// fixEntry.
 	var session mockSession
 	{
 		// mocks a query that returns fixEntry
