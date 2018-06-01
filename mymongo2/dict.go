@@ -13,7 +13,7 @@ type Dict struct {
 	collection string
 }
 
-// Interface a *mgo.Session.
+// Interfaces to github.com/globalsign/mgo types.
 type Session interface {
 	Clone() Session
 	DB(string) DataBase
@@ -29,6 +29,7 @@ type Query interface {
 	One(result interface{}) error
 }
 
+// NewDict returns a new dictionary ready to use.
 func NewDict(session Session, db, col string) *Dict {
 	return &Dict{
 		session:    session,
@@ -37,26 +38,17 @@ func NewDict(session Session, db, col string) *Dict {
 	}
 }
 
-// Entry is the internal mongo schema for dictionary entries.
-type Entry struct {
+// entry is the internal mongo schema for dictionary entries.
+type entry struct {
 	ID           bson.ObjectId `bson:"_id,omitempty"`
 	Abbreviation string        `bson:"abbr"`
 	Meaning      string        `bson:"data"`
 }
 
-func (c *Dict) LookUp(a string) (string, error) {
-	col := c.session.Clone().DB(c.database).C(c.collection)
-	query := bson.M{"abbr": a}
-	var result Entry
-	if err := col.Find(query).One(&result); err != nil {
-		return "", fmt.Errorf("looking for %q: %s", a, err)
-	}
-	return result.Meaning, nil
-}
-
+// Add adds an entry to the dictionary, using abbreviation a and meaning m.
 func (c *Dict) Add(a, m string) error {
 	col := c.session.Clone().DB(c.database).C(c.collection)
-	doc := Entry{
+	doc := entry{
 		Abbreviation: a,
 		Meaning:      m,
 	}
@@ -64,4 +56,15 @@ func (c *Dict) Add(a, m string) error {
 		return fmt.Errorf("inserting %q: %s", doc, err)
 	}
 	return nil
+}
+
+// LookUp returns the meaning for the abbreviation a.
+func (c *Dict) LookUp(a string) (string, error) {
+	col := c.session.Clone().DB(c.database).C(c.collection)
+	query := bson.M{"abbr": a}
+	var result entry
+	if err := col.Find(query).One(&result); err != nil {
+		return "", fmt.Errorf("looking for %q: %s", a, err)
+	}
+	return result.Meaning, nil
 }
